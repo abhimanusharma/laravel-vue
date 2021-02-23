@@ -8,11 +8,6 @@
 
     <link href="//cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css" rel="stylesheet">
 
-
-
-
-
-
     <title>@yield('title')</title>
 </head>
 <body>
