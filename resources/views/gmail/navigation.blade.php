@@ -6,17 +6,18 @@
 <a href="{{route('gmail.createETemplate')}}" class="btn btn-success"><span class="mdi mdi-page-previous"></span> Create Email Template</a>
 
 <ul class="list-group mt-4">
-    @foreach($data['folders'] as $key => $folder)
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-        <a style="text-decoration: none; width: 100%; color:#bb2d3b; " href="{{route('dashboard', ['type'=>$key])}}">
-            <span class="mdi mdi-email-mark-as-unread"></span> {{$folder}}
-        </a>
-        @if($key===$data['current_folder'])
-        <span class="badge bg-primary rounded-pill">unread {{$data['unreadNumber']}}</span>
-            @endif
-    </li>
-    @endforeach
-</ul>
+    @if(!empty($data))
+        @foreach($data['folders'] as $key => $folder)
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <a style="text-decoration: none; width: 100%; color:#bb2d3b; " href="{{route('dashboard', ['type'=>$key])}}">
+                <span class="mdi mdi-email-mark-as-unread"></span> {{$folder}}
+            </a>
+            @if($key===$data['current_folder'])
+            <span class="badge bg-primary rounded-pill">unread {{$data['unreadNumber']}}</span>
+                @endif
+        </li>
+        @endforeach
+    @endif</ul>
 
 <br />
 <br />

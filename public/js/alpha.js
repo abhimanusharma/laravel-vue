@@ -25,7 +25,7 @@ jQuery(function ($) {
             formData.append("message_id", message_id.val())
 
             $.ajax({
-                url: '/compose/attachment/save',
+                url: '/gmail/compose/attachment/save',
                 type: 'POST',
                 dataType: 'json',
                 processData: false,
@@ -109,7 +109,7 @@ jQuery(function ($) {
         // console.log(data);
 
         $.ajax({
-            url:'/compose/attachment/delete',
+            url:'/gmail/compose/attachment/delete',
             type:'POST',
             dataType:'json',
             data,
@@ -145,7 +145,7 @@ jQuery(function ($) {
         if (data.subject !== '' || data.message !== '' || data.to !== '') {
 
             $.ajax({
-                url: '/compose/save',
+                url: '/gmail/compose/save',
                 type: 'POST',
                 dataType: 'json',
                 data,
@@ -181,7 +181,7 @@ jQuery(function ($) {
 
     const templateLoader = (type, data)=>{
         $.ajax({
-            url:'/load-email-template',
+            url:'/gmail/load-email-template',
             type:'POST',
             dataType:'json',
             data,

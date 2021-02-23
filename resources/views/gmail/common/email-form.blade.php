@@ -10,8 +10,10 @@
             <span class="invalid-feedback">{{$errors->first('to')}}</span>
         @endif
 
-        <input type="hidden" name="message_id"/>
-        <input type="hidden" name="thread_id" value="{{$data['message']['id']}}"/>
+        @if(!empty($data['message']))
+            <input type="hidden" name="message_id"/>
+            <input type="hidden" name="thread_id" value="{{$data['message']['id']}}"/>
+        @endif
     </div>
 
     <div class="mb-3">

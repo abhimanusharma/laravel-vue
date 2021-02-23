@@ -1,4 +1,4 @@
-@if($message['has_attachments'])
+@if(!empty($message['has_attachments']))
     <br />
 
     <div class="card">

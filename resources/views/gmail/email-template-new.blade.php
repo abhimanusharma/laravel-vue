@@ -26,9 +26,9 @@
 
                             @foreach($templates as $template)
 
-                        <li class="list-group-item d-flex justify-content-between
-                        align-items-center bg-info mb-1"><a style="text-decoration: none; width: 100%; color:#fff;"
-                                                            class="template-leader" data-template-id="{{$template->id}}"  href="#">{{$template->name}}</a></li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center bg-info mb-1">
+                            <a style="text-decoration: none; width: 100%; color:#fff;" class="template-leader" data-template-id="{{$template->id}}"  href="#">{{$template->name}}</a>
+                        </li>
 
                             @endforeach
 
@@ -42,8 +42,7 @@
 
         <div class="col-8">
 
-            <a style="color:#888; font-size: 1.5em; " href="{{route('dashboard')}}"><span class="mdi
-            mdi-arrow-left-drop-circle"></span></a>
+        @include('gmail.common.dashboard-back')
 
             <div class="card">
                 <div class="card-header bg-secondary text-white">

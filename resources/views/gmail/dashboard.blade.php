@@ -2,6 +2,15 @@
 
 @section('container')
 
+    <div class="row justify-content-end">
+        <div class="col-1">
+        @if(LaravelGmail::check())
+            <a class="btn btn-danger" href="{{ route('gmail.logout') }}">logout</a>
+        @else
+            <a class="btn btn-primary" href="{{ route('gmail.login') }}">login</a>
+        @endif
+        </div>
+    </div>
 
     @include('gmail.search-transaction')
 
@@ -23,7 +32,7 @@
             <div class="card">
                 <div class="card-body">
 
-                    @if($data['messages'])
+                    @if(!empty($data['messages']))
                     @foreach($data['messages'] as $message)
 
                         @if($data['current_folder']==='DRAFT')
