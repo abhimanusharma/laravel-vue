@@ -662,8 +662,12 @@ class ApiController extends Controller {
         $result = $this->gmail->searchByTransactionId( $request->transaction_id );
 
         return view( 'gmail.dashboard' )->with( [
-            'messages' => $result['data'],
-            'folders'  => $result['folders']
+            'data' => [
+                'current_folder' => 'INBOX',
+                'unreadNumber' => 0,
+                'messages' => $result['data'],
+                'folders'  => $result['folders']
+            ],
         ] );
 
     }

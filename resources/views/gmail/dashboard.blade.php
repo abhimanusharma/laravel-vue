@@ -32,31 +32,29 @@
             <div class="card">
                 <div class="card-body">
 
-                    @if(!empty($data['messages']))
-                    @foreach($data['messages'] as $message)
+                    @if(!empty($data))
+                        @foreach($data['messages'] as $message)
 
                         @if($data['current_folder']==='DRAFT')
 
                         <a style="text-decoration: none; color:#555;" href="{{route('gmail.draft',['id'=>$message['id']])}}">
 
-                            @else
+                        @else
 
-                                <a style="text-decoration: none; color:#555;" href="{{route('singleEmail',
+                            <a style="text-decoration: none; color:#555;" href="{{route('singleEmail',
                         ['type'=>$data['current_folder'],'id'=>$message['id']])
                         }}">
 
                             @endif
 
-
-
-                    <div class="row pt-2 pb-2 mb-1 border-bottom border-1 border-secondary">
-                        <div class="col-2 dt {{$message['is_unread']?'fw-bold':''}}">{{$message['from']}}</div>
-                        <div class="col-7"><span class="{{$message['is_unread']?'fw-bold':''}}">{{$message['subject']}}</span> {{$message['excerpt']}}</div>
-                        <div class="col-1">@if($message['has_attachments'])<span class="mdi mdi-attachment"></span>@endif</div>
-                        <div class="col-2 {{$message['is_unread']?'fw-bold':''}}">{{$message['date']}}</div>
-                    </div>
+                            <div class="row pt-2 pb-2 mb-1 border-bottom border-1 border-secondary">
+                                <div class="col-2 dt {{$message['is_unread']?'fw-bold':''}}">{{$message['from']}}</div>
+                                <div class="col-7"><span class="{{$message['is_unread']?'fw-bold':''}}">{{$message['subject']}}</span> {{$message['excerpt']}}</div>
+                                <div class="col-1">@if($message['has_attachments'])<span class="mdi mdi-attachment"></span>@endif</div>
+                                <div class="col-2 {{$message['is_unread']?'fw-bold':''}}">{{$message['date']}}</div>
+                            </div>
                         </a>
-                    @endforeach
+                        @endforeach
                     @else
                         <div class="alert alert-warning" role="alert">
                             No Emails Found!!!
