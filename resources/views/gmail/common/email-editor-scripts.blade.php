@@ -38,7 +38,7 @@
 
 
     tinymce.init({
-        selector: '{{'#'.$emailAreaId}}',
+        selector: '{{"#".$emailAreaId}}',
         menubar: false,
         plugins: customPlugins,
         toolbar: customToolbar,

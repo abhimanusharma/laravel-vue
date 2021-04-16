@@ -492,7 +492,7 @@ class ApiController extends Controller {
             }
         }
 
-        $mail->from( session( 'gmail.me' )->emailAddress, 'ragib softobiz 02' );
+        $mail->from( session( 'gmail.me' )->emailAddress, 'REpylot' );
         $mail->message( $message );
 
 
