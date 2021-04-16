@@ -2,6 +2,7 @@
 
 namespace Dacastro4\LaravelGmail;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,7 +21,7 @@ class LaravelGmailServiceProvider extends ServiceProvider
 
 		// Main Service
 		$this->app->bind('laravelgmail', function ($app) {
-			return new LaravelGmailClass($app['config']);
+			return new LaravelGmailClass($app['config'], null, $app->make(Request::class));
 		});
 
 	}

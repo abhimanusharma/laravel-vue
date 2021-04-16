@@ -1,6 +1,9 @@
 /node_modules
 /public/hot
 /public/storage
+/public/gmail/**/**
+/storage/app/public/gmail/**
+/storage/app/gmail/tokens/**
 /storage/*.key
 /vendor
 .env.backup

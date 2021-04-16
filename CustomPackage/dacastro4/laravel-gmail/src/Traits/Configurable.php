@@ -2,7 +2,9 @@
 
 namespace Dacastro4\LaravelGmail\Traits;
 
+use App\GmailAuthData;
 use Google_Service_Gmail;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Arr;
 
@@ -21,7 +23,7 @@ trait Configurable
 		$this->_config = $config;
 	}
 
-	public function config($string = null)
+	public function config($string = null, $request = null)
 	{
 //		$disk = Storage::disk('local');
 //		$fileName = $this->getFileName();
@@ -45,20 +47,29 @@ trait Configurable
 //
 //		}
 
+		if(empty(session('gmail.token'))){
+			if(!$request) {
+				$request = config('global.request');
+			}
+			$gmailAuth = GmailAuthData::where('user_id', $request->login_user_id)->latest()->first();
+			if($gmailAuth) {
+				$config = $gmailAuth->config;
+				$config = json_decode($config, true);
+			}else {
+				return null;
+			}
+		}else {
+			$gmailAuth = session('gmail.token');
+			$config = json_decode($gmailAuth, true);
+		}
 
-        if (!empty(session('gmail.token'))) {
-
-            $config = json_decode(session('gmail.token'), true);
-
-            if ($string) {
-                if (isset($config[$string])) {
-                    return $config[$string];
-                }
-            } else {
-                return $config;
-            }
-
-        }
+		if ($string) {
+			if (isset($config[$string])) {
+				return $config[$string];
+			}
+		} else {
+			return $config;
+		}
 
 
         return null;

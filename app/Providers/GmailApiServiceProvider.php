@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Service\GmailApiService;
+use Illuminate\Http\Request;
 
 
 class GmailApiServiceProvider extends ServiceProvider
@@ -15,7 +16,9 @@ class GmailApiServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(GmailApiService::class, function($app){
+            return new GmailApiService($app->make(Request::class));
+        });
     }
 
     /**
@@ -26,9 +29,5 @@ class GmailApiServiceProvider extends ServiceProvider
     public function boot()
     {
         //
-
-        $this->app->bind(GmailApiService::class, function($app){
-            return new GmailApiService();
-        });
     }
 }

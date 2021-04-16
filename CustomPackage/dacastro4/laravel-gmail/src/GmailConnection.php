@@ -5,9 +5,11 @@ namespace Dacastro4\LaravelGmail;
 use Dacastro4\LaravelGmail\Traits\Configurable;
 use Google_Client;
 use Google_Service_Gmail;
+use Illuminate\Http\Request;
 use Illuminate\Container\Container;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
+
+use App\GmailAuthData;
 
 class GmailConnection extends Google_Client
 {
@@ -16,13 +18,16 @@ class GmailConnection extends Google_Client
 		__construct as configConstruct;
 	}
 
+	
+	public $userId;
+	protected $app;
+	protected $token;
+	protected $request;
+	protected $authCode;
+	protected $accessToken;
 	protected $emailAddress;
 	protected $refreshToken;
-	protected $app;
-	protected $accessToken;
-	protected $token;
 	private $configuration;
-	public $userId;
 
 	public function __construct($config = null, $userId = null)
 	{
@@ -38,9 +43,10 @@ class GmailConnection extends Google_Client
 
 		$this->configApi();
 
-		if ($this->checkPreviouslyLoggedIn()) {
-			$this->refreshTokenIfNeeded();
-		}
+		// if ($this->checkPreviouslyLoggedIn()) {
+		// 	$this->refreshTokenIfNeeded();
+		// }
+		$this->request = config('global.request');
 
 
 	}
@@ -67,11 +73,20 @@ class GmailConnection extends Google_Client
 //
 //		}
 
-        if (!empty(session('gmail.token'))) {
-            $savedConfigToken = json_decode(session('gmail.token'), true);
-            return !empty($savedConfigToken['access_token']);
+        //if (empty(session('gmail.token'))) {
+			$getToken = GmailAuthData::where('user_id', $this->request->login_user_id)->latest()->first();
+			if($getToken) {
+				$savedConfigToken = json_decode($getToken->config, true);
+            	return !empty($savedConfigToken['access_token']);
+			}else{
+				return false;
+			}
+			
+		// } else {
+        //     $savedConfigToken = json_decode(session('gmail.token'), true);
+        //     return !empty($savedConfigToken['access_token']);
 
-        }
+        // }
 
 		return false;
 	}
@@ -83,11 +98,29 @@ class GmailConnection extends Google_Client
 	 */
 	private function refreshTokenIfNeeded()
 	{
+		if ($this->isAccessTokenExpired())
+		{
+			$gmailAuthData = GmailAuthData::where('user_id', $this->request->login_user_id)
+			->latest()->first();
 
-		if ($this->isAccessTokenExpired()) {
+			try {
+				$this->setAccessType("refresh_token");
+				$this->fetchAccessTokenWithRefreshToken($this->getRefreshToken());
 
-			$this->fetchAccessTokenWithRefreshToken($this->getRefreshToken());
-			$token = $this->getAccessToken();
+				$token = $this->getAccessToken();
+			
+				$gmailAuthData->update(
+					['config' => json_encode($token),
+					'gmail_access_token' => $token['access_token'],
+					'gmail_refresh_token' => $token['refresh_token']]
+				);
+				$this->emailAddress = $gmailAuthData->email;
+
+			} catch(\Exception $e) {
+				$token = json_decode($gmailAuthData->config);
+				$this->setAccessToken($token);
+			}
+
 			$this->setBothAccessToken($token);
 
 			return $token;
@@ -105,6 +138,7 @@ class GmailConnection extends Google_Client
 	 */
 	public function isAccessTokenExpired()
 	{
+
 		$token = $this->getToken();
 
 
@@ -118,7 +152,7 @@ class GmailConnection extends Google_Client
 	public function getToken()
 	{
 
-		return parent::getAccessToken() ?: $this->config();
+		return parent::getAccessToken() ?: $this->config(null,$this->request);
 	}
 
 	public function setToken($token)
@@ -128,7 +162,7 @@ class GmailConnection extends Google_Client
 
 	public function getAccessToken()
 	{
-		$token = parent::getAccessToken() ?: $this->config();
+		$token = parent::getAccessToken() ?: $this->config(null,$this->request);
 
 		return $token;
 	}
@@ -159,13 +193,19 @@ class GmailConnection extends Google_Client
 	 */
 	public function saveAccessToken(array $config)
 	{
-//		$disk = Storage::disk('local');
-//		$fileName = $this->getFileName();
-//		$file = "gmail/tokens/$fileName.json";
-//		$allowJsonEncrypt = $this->_config['gmail.allow_json_encrypt'];
-		$config['email'] = $this->emailAddress;
+		
+		$config['email'] = $this->emailAddress ? $this->emailAddress : $this->getProfile()->emailAddress;
 
-		$gmailToken = session('gmail.token');
+		//$gmailToken = session('gmail.token');
+		if($this->checkPreviouslyLoggedIn() && $this->isAccessTokenExpired()) {
+			$gmailToken = GmailAuthData::where('user_id', $this->request->login_user_id)->latest()->first();
+			$updateToken = $gmailToken->update(
+				['config' => json_encode($config),
+				'gmail_access_token' => $config['access_token'],
+				'gmail_refresh_token' => $config['refresh_token']]
+			);
+			$gmailToken = $gmailToken->config;
+		}
 
 		if(!empty($gmailToken)){
 			if (empty($config['email'])) {
@@ -176,8 +216,26 @@ class GmailConnection extends Google_Client
 				}
 			}
         }
+		$email = $config['email'];
+		$expires_in = $config['expires_in'];
+		$token_type = $config['token_type'];
 
-		session(['gmail.token'=>json_encode($config)]);
+		if(empty($gmailToken)) {
+			GmailAuthData::updateOrCreate(
+				['user_id' => $this->request->login_user_id,],
+				[
+					'email' => $email,
+					'admin_id' => $this->request->admin_id,
+					'gmail_access_token' => $this->getAccessToken()['access_token'],
+					'gmail_refresh_token' => $this->getRefreshToken(),
+					'config' => json_encode($config),
+					'expires_in' => $expires_in,
+					'token_type' => $token_type,
+				]
+			);	
+		}
+		//session(['gmail.token'=>json_encode($config)]);
+		
 
 
 //		if ($disk->exists($file)) {
@@ -211,8 +269,8 @@ class GmailConnection extends Google_Client
 	 */
 	public function makeToken()
 	{
-		if (!$this->check()) {
-			$request = Request::capture();
+		$request = $this->request;
+		if (!$this->check($request)) {
 			$code = (string) $request->input('code', null);
 			if (!is_null($code) && !empty($code)) {
 				$accessToken = $this->fetchAccessTokenWithAuthCode($code);
@@ -245,6 +303,9 @@ class GmailConnection extends Google_Client
 	 */
 	public function check()
 	{
+		if ($this->checkPreviouslyLoggedIn()) {
+			$this->refreshTokenIfNeeded();
+		}
 
 		return !$this->isAccessTokenExpired();
 	}
@@ -274,7 +335,8 @@ class GmailConnection extends Google_Client
 	 */
 	public function deleteAccessToken()
 	{
-        session(['gmail.token'=>json_encode([])]);
+		GmailAuthData::where('gmail_access_token', $this->getAccessToken())->delete();
+        session()->forget('gmail.token');
 
 //		$disk = Storage::disk('local');
 //		$fileName = $this->getFileName();

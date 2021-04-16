@@ -122,8 +122,6 @@ class Attachment extends GmailConnection
 	 */
 	public function saveAttachmentTo($path = null, $filename = null, $disk = 'local')
 	{
-
-
 		$data = $this->getDecodedBody($this->getData());
 
 		if (!$data) {
@@ -143,7 +141,6 @@ class Attachment extends GmailConnection
 		Storage::disk($disk)->put($filePathAndName, $data);
 
 		return $filePathAndName;
-
 	}
 
 	/**

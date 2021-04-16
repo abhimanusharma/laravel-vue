@@ -2,7 +2,7 @@
 
 return [
 
-	/*
+    /*
 	|--------------------------------------------------------------------------
 	| Gmail Configuration
 	|--------------------------------------------------------------------------
@@ -28,19 +28,22 @@ return [
 	|
 	*/
 
-	'project_id' => env('GOOGLE_PROJECT_ID'),
-	'client_id' => env('GOOGLE_CLIENT_ID'),
-	'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-	'redirect_url' => env('GOOGLE_REDIRECT_URI', '/'),
+    'project_id' => env('GOOGLE_PROJECT_ID'),
+    'client_id' => env('GOOGLE_CLIENT_ID'),
+    'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+    'redirect_url' => env('GOOGLE_REDIRECT_URI', '/'),
 
-	'state' => null,
+    'state' => null,
 
-	'scopes' => [
-		'readonly',
-		'modify',
-	],
+    // 'scopes' => [
+    //     'readonly',
+    //     'modify',
+    // ],
+    'scopes' => [
+        'all'
+    ],
 
-	/*
+    /*
 	|--------------------------------------------------------------------------
 	| Additional Scopes [URL Style]
 	|--------------------------------------------------------------------------
@@ -53,15 +56,13 @@ return [
 	|
 	*/
 
-	'additional_scopes' => [
+    'additional_scopes' => [],
 
-	],
+    'access_type' => 'offline',
 
-	'access_type' => 'offline',
+    'approval_prompt' => 'force',
 
-	'approval_prompt' => 'force',
-
-	/*
+    /*
 	|--------------------------------------------------------------------------
 	| Credentials File Name
 	|--------------------------------------------------------------------------
@@ -71,9 +72,9 @@ return [
 	|
 	*/
 
-	'credentials_file_name' => env('GOOGLE_CREDENTIALS_NAME', 'gmail-json'),
+    'credentials_file_name' => env('GOOGLE_CREDENTIALS_NAME', 'gmail-json'),
 
-	/*
+    /*
 	|--------------------------------------------------------------------------
 	| Allow Multiple Credentials
 	|--------------------------------------------------------------------------
@@ -83,9 +84,9 @@ return [
 	|
 	*/
 
-	'allow_multiple_credentials' => env('GOOGLE_ALLOW_MULTIPLE_CREDENTIALS', false),
+    'allow_multiple_credentials' => env('GOOGLE_ALLOW_MULTIPLE_CREDENTIALS', true),
 
-	/*
+    /*
 	|--------------------------------------------------------------------------
 	| Allow Encryption for json Files
 	|--------------------------------------------------------------------------
@@ -95,5 +96,5 @@ return [
 	|
 	*/
 
-	'allow_json_encrypt' => env('GOOGLE_ALLOW_JSON_ENCRYPT', false),
+    'allow_json_encrypt' => env('GOOGLE_ALLOW_JSON_ENCRYPT', false),
 ];
