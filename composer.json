@@ -11,6 +11,7 @@
         "php": "^7.2.5|^8.0",
         "dacastro4/laravel-gmail": "^3.0",
         "fideloper/proxy": "^4.4",
+        "langleyfoxall/xero-laravel": "^3.1",
         "laravel/framework": "^6.20",
         "laravel/tinker": "^2.5"
     },

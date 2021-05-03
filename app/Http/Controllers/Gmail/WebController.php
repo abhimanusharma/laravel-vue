@@ -4,21 +4,20 @@ namespace App\Http\Controllers\Gmail;
 
 use App\EmailTemplate;
 use App\GmailAttachment;
-use App\Http\Controllers\Controller;
 use App\Service\GmailApiService;
-use Dacastro4\LaravelGmail\Facade\LaravelGmail;
+use App\Http\Controllers\Controller;
 
 use Exception;
-use Dacastro4\LaravelGmail\Services\Message\Mail;
+use Swift_Message;
+use Swift_Attachment;
 use Google_Service_Gmail_Draft;
 use Google_Service_Gmail_Label;
 use Google_Service_Gmail_Message;
 use Illuminate\Http\Request;
-use SebastianBergmann\Template\Template;
-use Swift_Message;
-use Swift_Attachment;
+use Dacastro4\LaravelGmail\Facade\LaravelGmail;
+use Dacastro4\LaravelGmail\Services\Message\Mail;
 
-class ApiController extends Controller {
+class WebController extends Controller {
 
 
     private $storageAttachments = "app" . DIRECTORY_SEPARATOR . "public" . DIRECTORY_SEPARATOR;

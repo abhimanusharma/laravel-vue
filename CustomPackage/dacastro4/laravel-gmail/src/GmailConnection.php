@@ -73,20 +73,24 @@ class GmailConnection extends Google_Client
 //
 //		}
 
-        //if (empty(session('gmail.token'))) {
-			$getToken = GmailAuthData::where('user_id', $this->request->login_user_id)->latest()->first();
-			if($getToken) {
-				$savedConfigToken = json_decode($getToken->config, true);
-            	return !empty($savedConfigToken['access_token']);
-			}else{
+        if (empty(session('gmail.token'))) {
+			if($this->request) {
+				$getToken = GmailAuthData::where('user_id', $this->request->login_user_id)->latest()->first();
+				if($getToken) {
+					$savedConfigToken = json_decode($getToken->config, true);
+					return !empty($savedConfigToken['access_token']);
+				}else{
+					return false;
+				}
+			} else {
 				return false;
 			}
 			
-		// } else {
-        //     $savedConfigToken = json_decode(session('gmail.token'), true);
-        //     return !empty($savedConfigToken['access_token']);
+		} else {
+            $savedConfigToken = json_decode(session('gmail.token'), true);
+            return !empty($savedConfigToken['access_token']);
 
-        // }
+        }
 
 		return false;
 	}

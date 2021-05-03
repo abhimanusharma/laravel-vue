@@ -2,6 +2,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Gmail\ApiController;
 use App\Http\Controllers\Gmail\WebController;
+use App\Http\Controllers\Xero\XeroController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,15 +18,15 @@ use App\Http\Controllers\Gmail\WebController;
 Route::get('/', [WebController::class, 'index'])->name('home');
 Route::group(['prefix' => 'gmail'], function () {
 
-    // Setup route started
+    //Setup route started
     Route::get('/oauth/gmail', [WebController::class, 'login'])->name('gmail.login');
     Route::get('/oauth/gmail/logout', [WebController::class, 'logout'])->name('gmail.logout');
-    // Returned URL
+    //Returned URL
     Route::get('/gmail-api', [WebController::class, 'gmailCallback'])->name('gmailCallback');
-    // Setup Routes: Ended
+    //Setup Routes: Ended
 
 
-    // Application Routes: Started
+    //Application Routes: Started
     Route::get('/dashboard/{type}', [WebController::class, 'dashboard'])->name('dashboard');
     Route::get('/dashboard/{type}/{id}', [WebController::class, 'singleEmail'])->name('singleEmail');
 
@@ -64,3 +65,10 @@ Route::group(['prefix' => 'gmail'], function () {
 Route::get('gmail/oauth/api', [ApiController::class, 'checkLogin']);
 Route::get('gmail/callback', [ApiController::class, 'gmailCallback']);
 // refer api.php for other api controller routes
+
+Route::get('xero/oauth', [XeroController::class, 'redirectUserToXero'])->name('xero.connect');
+Route::get('xero/callback', [XeroController::class, 'handleCallbackFromXero']);
+
+// Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

@@ -6,8 +6,10 @@
             @if(LaravelGmail::check())
                 <a class="btn btn-danger" href="{{ route('gmail.logout') }}">logout</a>
             @else
-                <a class="btn btn-primary" href="{{ route('gmail.login') }}">login</a>
+                <a class="btn btn-primary" href="{{ route('gmail.login') }}">login gmail</a>
             @endif
+
+            <a class="ml-4 btn btn-danger" href="{{ route('xero.connect') }}">login xero</a>
 
         </div>
     </div>

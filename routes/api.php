@@ -18,7 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Gmail actions
+//Gmail actions
 Route::get('gmail/login', [ApiController::class, 'login']);
 Route::group(['middleware' => ['gmailAuth']], function () {
     // Gmail templates //

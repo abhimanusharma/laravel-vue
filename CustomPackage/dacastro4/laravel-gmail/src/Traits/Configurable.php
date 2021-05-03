@@ -51,11 +51,16 @@ trait Configurable
 			if(!$request) {
 				$request = config('global.request');
 			}
-			$gmailAuth = GmailAuthData::where('user_id', $request->login_user_id)->latest()->first();
-			if($gmailAuth) {
-				$config = $gmailAuth->config;
-				$config = json_decode($config, true);
-			}else {
+			if($request)
+			{
+				$gmailAuth = GmailAuthData::where('user_id', $request->login_user_id)->latest()->first();
+				if($gmailAuth) {
+					$config = $gmailAuth->config;
+					$config = json_decode($config, true);
+				}else {
+					return null;
+				}
+			}else{
 				return null;
 			}
 		}else {
